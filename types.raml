@@ -1,0 +1,139 @@
+BaseObject:
+  properties:
+    id?: integer
+    created_at?: datetime
+    updated_at?: datetime
+Property:
+  properties:
+    name: string
+PropertyBaseObject:
+  type: [BaseObject, Property]
+  properties:
+    slug: string
+
+
+DetailedAnswer:
+  properties:
+    message: string
+    errors?:
+      properties:
+        /^[a-z_]*$/: string[]
+
+##############################################
+##  Independent Models                     ##
+##############################################
+
+MenuRequest:
+  type: Property
+Menu:
+  type: [MenuRequest, PropertyBaseObject]
+MenuExpanded:
+  type: Menu
+  properties:
+    items: MenuItem[]
+
+MenuItemRequest:
+  properties:
+    name: string
+    url?: string
+    parent_id?: integer
+    menu_id?: integer
+    icon?: string
+MenuItem:
+  type: [MenuItemRequest, BaseObject]
+MenuItemExpanded:
+  type: MenuItem
+
+##############################################
+##  Content related                         ##
+##############################################
+
+ContentBase:
+  properties:
+    title: string
+    subject: string
+    thumbnail: string
+    abstract: integer
+    available: boolean
+    bibliographic_citation: string
+    date: datetime
+    date_copyrighted: datetime
+    date_submitted: date
+    description: string
+    identifier: string
+    is_referenced_by: number[]
+    source: string
+    size: integer
+    reading_time: time
+
+    type_id: integer
+    subject_ids: integer[]
+    contributor_id: integer
+    creator_id: integer
+    audience_id: integer
+    education_level_id: integer
+    format_id: integer
+    language_id: integer
+    license_id: integer
+    publisher_id: integer
+ContentRequest:
+  type: ContentBase
+  properties:
+    images: file[]
+    images_remove?: string[]
+Content:
+  type: [ContentBase, BaseObject]
+
+##############################################
+##  User related                            ##
+##############################################
+
+GroupRequest:
+  type: Property
+  properties:
+    discount_value?: integer
+Group:
+  type: [GroupRequest, PropertyBaseObject]
+GroupExpanded:
+  type: Group
+
+UserBase:
+  properties:
+    email: string
+    first_name: string
+    last_name: string
+    about?: string
+    phone?: string
+    group_ids?: integer[]
+UserRequest:
+  type: UserBase
+  properties:
+    password?: string
+    cover?: file
+    picture?: file
+    following_add?: integer[]
+    following_remove?: integer[]
+    favorites_add?: integer[]
+    favorites_remove?: integer[]
+User:
+  type: [UserBase, BaseObject]
+  properties:
+    cover?: string
+    picture?: string
+    followers_id?: integer[]
+    following_ids: integer[]
+UserExpanded:
+  type: User
+  properties:
+    followers_ids: integer[]
+    following_ids: integer[]
+    followers_count: integer
+    following_count: integer
+UserWithToken:
+  type: UserExpanded
+  properties:
+    api_token: string
+Auth:
+  properties:
+    email: string
+    password: string
